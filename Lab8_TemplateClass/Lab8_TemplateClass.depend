@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1541072659 source:f:\engineering\iti\oop_course_labs\lab8_templateclass\main.cpp
+	<iostream>
+	"operators_complex.h"
+
+1541070658 source:f:\engineering\iti\oop_course_labs\lab8_templateclass\operators_complex.cpp
+	<iostream>
+
+1541102057 f:\engineering\iti\oop_course_labs\lab8_templateclass\operators_complex.h
+	<iostream>
+

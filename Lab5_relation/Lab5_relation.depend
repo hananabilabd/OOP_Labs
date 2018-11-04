@@ -1,0 +1,35 @@
+# depslib dependency file v1.0
+1540893623 source:f:\engineering\iti\oop_course_labs\lab5_relation\main.cpp
+	<iostream>
+	"g.h"
+	<conio.h>
+	<math.h>
+	<windows.h>
+	<unistd.h>
+
+1540798022 f:\engineering\iti\oop_course_labs\lab5_relation\graphics.h
+	<iostream>
+	<math.h>
+	<windows.h>
+	<Windows.h>
+
+1540833212 source:f:\engineering\iti\oop_course_labs\lab5_relation\ell.cpp
+
+1540798022 f:\engineering\iti\oop_course_labs\lab5_relation\graphicss.h
+	<iostream>
+	<math.h>
+	<windows.h>
+	<Windows.h>
+
+1540843216 source:f:\engineering\iti\oop_course_labs\lab5_relation\g.cpp
+	<iostream>
+	<math.h>
+	<windows.h>
+	<Windows.h>
+
+1540798022 f:\engineering\iti\oop_course_labs\lab5_relation\g.h
+	<iostream>
+	<math.h>
+	<windows.h>
+	<Windows.h>
+

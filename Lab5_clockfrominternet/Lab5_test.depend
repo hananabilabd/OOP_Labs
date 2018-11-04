@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1540834481 source:f:\engineering\iti\oop_course_labs\lab5_test\main.cpp
+	<graphics.h>
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+	<conio.h>
+	<math.h>
+	<dos.h>
+	<string.h>
+	<iostream>
+	<ctime>
+

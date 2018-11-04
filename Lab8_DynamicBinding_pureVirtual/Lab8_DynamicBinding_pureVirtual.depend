@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1541070083 source:f:\engineering\iti\oop_course_labs\lab8_dynamicbinding_purevirtual\main.cpp
+	<iostream>
+	<conio.h>
+	<math.h>
+

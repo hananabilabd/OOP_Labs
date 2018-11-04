@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1540899413 source:f:\engineering\iti\oop_course_labs\lab6_inheritanceclock\main.cpp
+	<iostream>
+	"g.h"
+	<conio.h>
+	<math.h>
+	<windows.h>
+	<unistd.h>
+
+1540798022 f:\engineering\iti\oop_course_labs\lab6_inheritanceclock\g.h
+	<iostream>
+	<math.h>
+	<windows.h>
+	<Windows.h>
+

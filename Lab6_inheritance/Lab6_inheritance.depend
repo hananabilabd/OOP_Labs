@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1540898848 source:f:\engineering\iti\oop_course_labs\lab6_inheritance\main.cpp
+	<iostream>
+	<conio.h>
+	<math.h>
+
