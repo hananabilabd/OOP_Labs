@@ -1,0 +1,316 @@
+// camera movement -- cyrstall ball interface using arrow keys
+#include <math.h>
+#include "glut.h"
+
+int windowWidth = 1024;
+int windowHeight = 768;
+static int shoulder = 0, elbow = 0, fingr = 0, wrist = 0;
+
+float aspect = float(windowWidth) / float(windowHeight);
+
+double eye[] = {0,0,1};
+double center[] = {0,0,0};         // Origin
+double up[] = {0,1,0};             // in y axis.
+
+void initRendering(){
+	glutInitWindowSize(windowWidth, windowHeight);
+	// Allow double and depth buffers
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);  
+	glutCreateWindow("Task one");
+	glClearColor(0.0, 0.0, 0.0, 0.0);    //black color.
+}
+
+void crossProduct(double a[], double b[], double c[])
+{
+	c[0] = a[1]*b[2] - a[2]*b[1];
+	c[1] = a[2]*b[0] - a[0]*b[2];
+	c[2] = a[0]*b[1] - a[1]*b[0];
+}
+
+void normalize(double a[])
+{
+	double norm;
+	norm = a[0]*a[0] + a[1]*a[1] + a[2]*a[2];
+	norm = sqrt(norm);
+	a[0] /= norm;
+	a[1] /= norm;
+	a[2] /= norm;
+}
+
+void rotatePoint(double a[], double theta, double p[])  // implementation of rotation in 2nd lecture.
+{
+
+double temp[3];
+temp[0] = p[0];
+temp[1] = p[1];
+temp[2] = p[2];
+
+temp[0] = -a[2]*p[1] + a[1]*p[2];
+temp[1] = a[2]*p[0] - a[0]*p[2];
+temp[2] = -a[1]*p[0] + a[0]*p[1];
+
+temp[0] *= sin(theta);
+temp[1] *= sin(theta);
+temp[2] *= sin(theta);
+
+temp[0] += (1-cos(theta))*(a[0]*a[0]*p[0] + a[0]*a[1]*p[1] + a[0]*a[2]*p[2]);
+temp[1] += (1-cos(theta))*(a[0]*a[1]*p[0] + a[1]*a[1]*p[1] + a[1]*a[2]*p[2]);
+temp[2] += (1-cos(theta))*(a[0]*a[2]*p[0] + a[1]*a[2]*p[1] + a[2]*a[2]*p[2]);
+
+temp[0] += cos(theta)*p[0];
+temp[1] += cos(theta)*p[1];
+temp[2] += cos(theta)*p[2];
+
+p[0] = temp[0];
+p[1] = temp[1];
+p[2] = temp[2];
+
+}
+
+void Left()
+{
+	double speed = 3.1415/8;
+	rotatePoint(up,speed,eye);
+}
+
+void Right()
+{
+	double speed = 3.1415/8;
+	rotatePoint(up,-speed,eye);   // to rotate the camera.
+}
+
+void Up()
+{
+	double speed = 3.1415/8;
+	double rot_axis[3];
+	double look[3];
+
+	look[0] = center[0] -eye[0];
+	look[1] = center[1] -eye[1];
+	look[2] = center[2] -eye[2];
+
+	crossProduct(look,up,rot_axis);
+
+	normalize(rot_axis);
+
+	rotatePoint(rot_axis,speed,eye);
+
+	rotatePoint(rot_axis,speed,up);
+
+}
+
+void Down()
+{
+	double speed = 3.1415/8;
+	double rot_axis[3];
+	double look[3];
+
+	look[0] = center[0] -eye[0];
+	look[1] = center[1] -eye[1];
+	look[2] = center[2] -eye[2];
+
+	crossProduct(look,up,rot_axis);
+
+	normalize(rot_axis);
+
+	rotatePoint(rot_axis,-speed,eye);
+
+	rotatePoint(rot_axis,-speed,up);
+
+}
+
+
+void display ( void )
+{
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	// Modeling and Viewing Mode
+	glMatrixMode(GL_MODELVIEW);
+	// Load the identity matrix
+	glLoadIdentity();   // load the identical objects.
+	// Specify the camera position
+	gluLookAt(eye[0], eye[1], eye[2], center[0], center[1], center[2], up[0], up[1], up[2]);
+
+	// draw and rotate the box
+	glPushMatrix();
+	// rotate when a key is pressed
+	glTranslatef(0.0, 0.0, 0.0);
+	glRotatef((GLfloat)shoulder, 0.0, 0.0, 1.0);
+
+	// draw forearm
+	glPushMatrix();
+	glTranslatef(0.0, 0.0, 0.0);
+	glScalef(0.35, 0.1, 0.1);
+	glutWireCube(0.4);
+	glPopMatrix();
+
+	// draw elbow joint
+	glPushMatrix();
+	glTranslatef(0.099,-0.001, 0.0);
+	glScalef(0.1, 0.1, 0.1);
+	glColor3f(1,1,0);
+	glutSolidSphere(0.4,50,20);
+	glPopMatrix();
+
+	//glTranslatef(-0.2, 0.0, 0.0);
+	//draw arm
+	glTranslatef(0.1, 0.0,0.0);
+	glRotatef((GLfloat)elbow, 0.0, 0.0, 1.0);
+	glTranslatef(-0.1, 0.0,0.0);
+	glPushMatrix();
+	glTranslatef(0.2, 0.0, 0.0);
+	glScalef(0.35, 0.1, 0.1);
+	glutWireCube(0.4);
+	glPopMatrix();
+
+	//draw wrist joint
+	glPushMatrix();
+	glTranslatef(0.305, -0.001, 0.0);
+	glScalef(0.1, 0.1, 0.1);
+	glColor3f(1, 0, 0);
+	glutSolidSphere(0.4, 20, 20);
+	glPopMatrix();
+
+
+	glTranslatef(0.3, 0.0,0.0);
+	glRotatef((GLfloat)wrist, 0.0, 0.0, 1.0);
+	glTranslatef(-0.3, 0.0,0.0);
+	// draw Down  1st finger
+
+	glPushMatrix();
+	glTranslatef(0.3, 0.0,0.0);
+	glRotatef((GLfloat)fingr, 0.0, 0.0, 1.0);
+
+	glTranslatef(-0.3, 0.0,0.0);
+
+	glPushMatrix();
+	glTranslatef(0.36,-0.017, 0.0);
+	glRotatef(30,0,1,-0.2);
+	glScalef(0.2, 0.05, 0.05);
+	glutWireCube(0.3);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.38, -0.02, 0.0);
+	glScalef(0.1, 0.1, 0.1);
+	glColor3f(1, 1, 0);
+	glutSolidSphere(0.05, 20, 20);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.4,-0.02, 0.0);
+	glRotatef(40, 0, 1, 0.05);
+	glScalef(0.2, 0.05, 0.05);
+	glutWireCube(0.3);
+	glPopMatrix();
+	glPopMatrix();
+
+
+	// draw UP 2nd finger
+	glPushMatrix();
+	glTranslatef(0.3, 0.0,0.0);
+	glRotatef(-(GLfloat)fingr, 0.0, 0.0, 1.0);
+	glTranslatef(-0.3, 0.0,0.0);
+
+	glPushMatrix();
+	glTranslatef(0.36, 0.017, 0.0);
+	glRotatef(30, 0, 1, 0.25);
+	glScalef(0.2, 0.05, 0.05);
+	glutWireCube(0.3);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.38, 0.015, 0.0);
+	glScalef(0.1, 0.1, 0.1);
+	glColor3f(0, 1, 0);
+	glutSolidSphere(0.05, 20, 20);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.4, 0.018, 0.0);
+	glRotatef(40, 0, 1, 0.05);
+	glScalef(0.2, 0.05, 0.05);
+	glutWireCube(0.3);
+	glPopMatrix();
+	glPopMatrix();
+
+
+	glPopMatrix();
+	// end of the box
+
+	glFlush ();
+	glutSwapBuffers();        // to swap between the model and view.
+}
+
+void specialKeys(int key, int x, int y)
+{
+	switch( key )
+	{
+		case GLUT_KEY_LEFT  : Left(); break;
+        case GLUT_KEY_RIGHT : Right() ; break;
+        case GLUT_KEY_UP :    Up() ; break;
+        case GLUT_KEY_DOWN :  Down() ; break;
+	}
+    // Refresh the window
+    glutPostRedisplay();
+}
+
+void KeyBoard(unsigned char key, int x, int y){
+	switch (key){
+	case '4':
+		if (shoulder == 160) break;
+				shoulder += 5.0;
+				break;
+	case '5':
+		if (shoulder == -140) break;
+				shoulder -= 5.0;
+				break;
+
+	case '!':
+		if (elbow == 140) break;
+		elbow += 5.0;
+		break;
+
+	case '1':
+		if (elbow == 0) break;
+		elbow -= 5.0;
+		break;
+	case '3':
+		if(fingr == -15){
+		 break;
+	 }
+		fingr -=5.0;
+		break;
+	case '#':
+		if(fingr == 0)
+		 break;
+		fingr +=5.0;
+		break;
+	case '2':
+		if(wrist  == 90) break;
+		wrist +=5.0;
+		break;
+	case '@':
+		if(wrist  == -90) break;
+		wrist -=5.0;
+		break;
+	}
+	// Refresh the window
+	glutPostRedisplay();
+}
+
+int main(){
+
+	initRendering();
+	// Projection Mode
+	glMatrixMode(GL_PROJECTION);
+	gluPerspective(60, aspect, 0, 10);
+
+	glutDisplayFunc(display);
+	glutKeyboardFunc(KeyBoard);
+	glutSpecialFunc(specialKeys);
+
+	glutMainLoop();
+	return 0;
+
+}

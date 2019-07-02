@@ -1,0 +1,348 @@
+#include"glut.h"
+#include<math.h>
+
+float windowWidth = 2048;
+float windowHeight = 2048;
+
+float aspect = windowWidth / windowHeight;
+float door_open = 0.0;
+int door = -1;
+double speed = 3.1415 / 50;
+double eye[] = { 3.75, 0, 3.75};
+double center[] = { 7.25, 0, 3.75 };
+double up[] = { 0, 1, 0 };
+
+
+
+
+void init(){
+
+	glutInitWindowSize(windowWidth, windowHeight);
+	glutInitDisplayMode(GLUT_RGBA | GL_DOUBLE | GLUT_DEPTH);
+	glutCreateWindow("Hello Depth Buffer");
+	glEnable(GL_DEPTH_TEST); 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void rotatePoint(double a[], double theta, double p[])
+{
+
+	double temp[3];
+	temp[0] = p[0];
+	temp[1] = p[1];
+	temp[2] = p[2];
+
+	temp[0] = -a[2] * p[1] + a[1] * p[2];
+	temp[1] = a[2] * p[0] - a[0] * p[2];
+	temp[2] = -a[1] * p[0] + a[0] * p[1];
+
+	temp[0] *= sin(theta);
+	temp[1] *= sin(theta);
+	temp[2] *= sin(theta);
+
+	temp[0] += (1 - cos(theta))*(a[0] * a[0] * p[0] + a[0] * a[1] * p[1] + a[0] * a[2] * p[2]);
+	temp[1] += (1 - cos(theta))*(a[0] * a[1] * p[0] + a[1] * a[1] * p[1] + a[1] * a[2] * p[2]);
+	temp[2] += (1 - cos(theta))*(a[0] * a[2] * p[0] + a[1] * a[2] * p[1] + a[2] * a[2] * p[2]);
+
+	temp[0] += cos(theta)*p[0];
+	temp[1] += cos(theta)*p[1];
+	temp[2] += cos(theta)*p[2];
+
+	p[0] = temp[0];
+	p[1] = temp[1];
+	p[2] = temp[2];
+
+}
+
+void moveForward()
+{
+	double speed = 0.01;
+	double direction[3];
+	direction[0] = center[0] - eye[0];
+	direction[1] = center[1] - eye[1];
+	direction[2] = center[2] - eye[2];
+
+	eye[0] += direction[0] * speed;
+	eye[1] = eye[1];
+	eye[2] += direction[2] * speed;
+
+	center[0] += direction[0] * speed;
+	center[1] = center[1];
+	center[2] += direction[2] * speed;
+	glutPostRedisplay();
+}
+
+void moveBack()
+{
+	double speed = -0.01;
+	double direction[3];
+	direction[0] = center[0] - eye[0];
+	direction[1] = center[1] - eye[1];
+	direction[2] = center[2] - eye[2];
+
+	eye[0] += direction[0] * speed;
+	eye[1] = eye[1];
+	eye[2] += direction[2] * speed;
+
+	center[0] += direction[0] * speed;
+	center[1] = center[1];
+	center[2] += direction[2] * speed;
+	glutPostRedisplay();
+}
+
+void Up()
+{
+	double move = 0.09;
+	if (center[1]<=1.5)
+	center[1] += move;
+
+	glutPostRedisplay();
+
+}
+
+void Down()
+{
+
+	double move = 0.09;
+
+	if (center[1] >= -1.5)
+	center[1] -= move;
+
+	glutPostRedisplay();
+}
+
+void display(){
+
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(eye[0], eye[1], eye[2],center[0],center[1],center[2], up[0], up[1], up[2]);
+	glTranslatef(7.39, 0, 0);
+	
+	//draw the back
+	glPushMatrix();
+	glColor3f(1,0, 0);
+	glColor3f(1,0,0);
+	glTranslatef(0, 0, 0.1);
+	glScalef(15, 7.5, 0.25);
+	glutSolidCube(1);
+	glPopMatrix();
+	
+	
+	//draw the front
+	glPushMatrix();
+	glColor3f(1, 0, 0);
+	glTranslatef(0, 0, 7.73);
+	glScalef(15, 7.5, 0.25);
+	glutSolidCube(1);
+	glPopMatrix();
+	
+	
+	//draw the roof
+	glPushMatrix();
+	glColor3f(0, 0, 1);
+	glTranslatef(0,3.85,3.9);
+	glScalef(15, 0.25, 7.9);
+	glRotatef(90, 1, 0, 0);
+	glutSolidCube(1);
+	glPopMatrix();
+
+	//draw the floor
+	glPushMatrix();
+	glColor3f(0, 0, 1);
+	glTranslatef(0, -3.85, 3.9);
+	glScalef(15, 0.25, 7.9);
+	glRotatef(90, 1, 0, 0);
+	glutSolidCube(1);
+	glPopMatrix();
+	
+	//draw the sides
+	glPushMatrix();
+	glColor3f(0.5, 0.5, 0.5);
+	glTranslatef(7.39, 0, 3.9);
+	glScalef(0.25, 7.5, 7.4);
+	glutSolidCube(1);
+	glPopMatrix();
+
+	glPushMatrix();
+	glColor3f(0.5, 0.5, 0.5);
+	glTranslatef(-7.39, 0, 3.9);
+	glScalef(0.25, 7.5, 7.4);
+	glutSolidCube(1);
+	glPopMatrix();
+	
+	//middle 1st the sides
+	glPushMatrix();
+	glColor3f(0.5, 0.5, 0.5);
+	glTranslatef(0, 0, 1.4);
+	glScalef(0.25, 7.5, 2.5);
+	glutSolidCube(1);
+	glPopMatrix();
+	
+	//middle 2nd the sides
+	glPushMatrix();
+    glColor3f(0.5, 0.5, 0.5);
+	glTranslatef(0, 0, 6.35);
+	glScalef(0.25, 7.5, 2.5);
+	glutSolidCube(1);
+	glPopMatrix();
+	
+	//rotate the door
+	glTranslatef(0, 0,2.5);
+	glRotatef(door_open, 0, 1, 0);
+	glTranslatef(0,0,-2.5);
+	//draw the sides
+	glPushMatrix();
+	glColor3f(153,76, 0);
+	glTranslatef(0, 0, 3.85);
+	glScalef(0.25, 7.5, 2.5);
+	glutSolidCube(1);
+	glPopMatrix();
+	
+	glutSwapBuffers();
+	glutPostRedisplay();
+}
+
+void Timer(int x){
+
+	if (door == 1)
+	{ if (door_open<90)
+		door_open = door_open + 0.5;
+	}
+	if (door==-1)
+	{   
+		if (door_open>0)
+		door_open = door_open - 0.5;
+	}
+	
+	glutPostRedisplay();
+	glutTimerFunc(30, Timer, 0);
+	
+}
+
+void Keyboard(unsigned char Key, int x, int y){
+	switch (Key)
+	{
+	case ' ':
+		if (door == -1)
+		{
+			door = 1;
+			glutTimerFunc(0, Timer, 0);
+			return;
+		}
+		if (door == 1)
+		{
+			door = -1;
+			glutTimerFunc(0, Timer, 0);
+			return;
+		}
+
+			break;
+
+	case 'f':
+		if ((eye[0]<14 && eye[0]>0.3 && eye[2]>0.9 && eye[2]<7) )
+		{
+			if (eye[0] <= 0.3)
+				eye[0] = 0.4;
+			if (eye[0] >= 14)
+				eye[0] = 13.9;
+			if (eye[2] <= 0.9)
+				eye[2] = 1;
+			if (eye[2] >= 7)
+				eye[2] = 6.9;
+
+		
+
+		
+			if (eye[0] >= 6.4 && eye[0] <= 7.6)
+			{
+				if (center[2] >= 2.5 && center[2] <= 5 && door == 1)
+					moveForward();
+				else if ((eye[0]<7) && (eye[0] >= center[0]))
+					moveForward();
+				
+				else if (eye[0] > 7)
+					eye[0] = 7.52;
+
+			}
+			else if (!(eye[0] >= 6.4 && eye[0] <= 7.6))
+				moveForward();
+
+			
+				break;
+		}
+
+            break;
+	
+	case 'b':	
+		if ((eye[0]<14 && eye[0]>0.3 && eye[2]>0.9 && eye[2]<7))
+		{
+			if (eye[0] <= 0.3)
+				eye[0] = 0.4;
+			if (eye[0] >= 14)
+				eye[0] = 13.9;
+			if (eye[2] <= 0.9)
+				eye[2] = 1;
+			if (eye[2] >= 7)
+				eye[2] = 6.9;
+
+
+
+
+			if (eye[0] >= 6.4 && eye[0] <= 7.6)
+			{
+				if (center[2] >= 2.5 && center[2] <= 5 && door == 1 && (center[0]<=eye[0]))
+					moveBack();
+				
+				else moveBack();
+
+			}
+			else if (!(eye[0] >= 6.4 && eye[0] <= 7.6))
+				moveBack();
+
+			break;
+		}
+
+		break;
+
+
+	default:
+		break;
+	}
+}
+
+void specialKeys(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_LEFT: 
+		rotatePoint(up, speed, center);
+
+		break;
+	case GLUT_KEY_RIGHT: 
+		rotatePoint(up, -speed,center);
+		break;
+
+	case GLUT_KEY_UP:   
+		 
+		Up();
+		break;
+	case GLUT_KEY_DOWN:  
+		Down();
+		break;
+	}
+
+}
+int main(){
+	init();
+	glMatrixMode(GL_PROJECTION);
+	gluPerspective(120, aspect, 0.1, -10);
+	glutDisplayFunc(display);
+	glutKeyboardFunc(Keyboard);
+	glutSpecialFunc(specialKeys);
+	glutMainLoop();
+	return 0;
+}
+		
